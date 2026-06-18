@@ -1,0 +1,96 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// (auth) 권한 이넘
+enum Role {
+  ADMIN // 관리자
+  USER // 일반회원
+}
+
+// 유저
+model User {
+  id        Int      @id @default(autoincrement()) // 회원 고유 ID
+  email     String   @unique // 로그인 이메일
+  password  String // 암호화된 비밀번호 auth, bcrypt 암호할 예정
+  nickname  String // 사용자 닉네임
+  role      Role     @default(USER) // auth, 권한
+  createdAt DateTime @default(now()) // 회원 가입일
+
+  favorites Favorite[]
+  posts     Post[]
+}
+
+// 칵테일
+model Cocktail {
+  id             Int     @id @default(autoincrement()) // 칵테일 고유 ID
+  name_en        String // 영문이름
+  name_ko        String // 한글이름
+  image_url      String? // 칵테일 이미지 경로
+  category       String // 칵테일 카테고리
+  alcoholic      String // 알콜여부
+  glass          String // 사용잔 종류
+  instruction_en String // 영문 제조방법
+
+  ingredients CocktailIngredient[]
+  favorites   Favorite[]
+}
+
+// 재료
+model Ingredient {
+  id        Int     @id @default(autoincrement()) // 재료 고유 ID
+  name_en   String // 영문이름
+  name_ko   String // 한글이름
+  image_url String? // 재료 아이콘 경로
+
+  cocktails CocktailIngredient[]
+}
+
+// 칵테일_재료 매핑
+model CocktailIngredient {
+  id          Int      @id @default(autoincrement()) // 매핑 고유 ID
+  cocktail_id Int // 칵테일 ID, 외래키
+  cocktail    Cocktail @relation(fields: [cocktail_id], references: [id])
+
+  ingredient_id Int // 재료 ID, 외래키
+  ingredient    Ingredient @relation(fields: [ingredient_id], references: [id])
+  measure       String? // 재료 사용량
+
+  @@unique([cocktail_id, ingredient_id]) // 중복 방지
+}
+
+// 즐겨찾기
+model Favorite {
+  id      Int  @id @default(autoincrement()) // 즐겨찾기 ID
+  user_id Int // 회원 ID, 외래키
+  user    User @relation(fields: [user_id], references: [id])
+
+  cocktail_id Int // 칵테일 ID, 외래키
+  cocktail    Cocktail @relation(fields: [cocktail_id], references: [id])
+  createdAt   DateTime @default(now()) // 등록일
+
+  @@unique([user_id, cocktail_id]) // 중복 방지(같은 사용자가 같은 칵테일을 여러번 즐겨찾기 못하게)
+}
+
+// 믹스보드 게시판
+model Post {
+  id        Int      @id @default(autoincrement()) // 게시글 ID
+  user_id   Int // 작성자 ID, 외래키
+  user      User     @relation(fields: [user_id], references: [id])
+  title     String // 게시글 제목
+  content   String // 게시글 내용
+  image_url String? // 게시글 이미지 경로
+  createdAt DateTime @default(now()) // 작성일
+  updatedAt DateTime @updatedAt // 수정일
+}
