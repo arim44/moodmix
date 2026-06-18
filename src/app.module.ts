@@ -8,7 +8,6 @@ import { FavoritesModule } from './favorites/favorites.module';
 import { AuthModule } from './auth/auth.module';
 import { CocktailsModule } from './cocktails/cocktails.module';
 import { IngredientsModule } from './ingredients/ingredients.module';
-import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [UsersModule, AuthModule, CocktailsModule, IngredientsModule, FavoritesModule, PostsModule, PrismaModule],
