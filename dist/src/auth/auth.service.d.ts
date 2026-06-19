@@ -1,9 +1,19 @@
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { UsersService } from '../users/users.service';
+import { JwtService } from '@nestjs/jwt';
+import { RegisterDto } from './dto/register.dto';
+import { LoginDto } from './dto/login.dto';
 export declare class AuthService {
-    create(createAuthDto: CreateAuthDto): string;
-    findAll(): string;
-    findOne(id: number): string;
-    update(id: number, updateAuthDto: UpdateAuthDto): string;
-    remove(id: number): string;
+    private readonly userService;
+    private readonly jwtService;
+    constructor(userService: UsersService, jwtService: JwtService);
+    register(dto: RegisterDto): Promise<{
+        email: string;
+        nickname: string;
+        role: import("@prisma/client").$Enums.Role;
+        createdAt: Date;
+        id: number;
+    }>;
+    login(dto: LoginDto): Promise<{
+        access_token: string;
+    }>;
 }

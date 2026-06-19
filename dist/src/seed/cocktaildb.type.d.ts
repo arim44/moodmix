@@ -1,18 +1,25 @@
-
+export interface CocktailSeedData {
+    externalId: number;
+    name: string;
+    imageThumb: string;
+    category: string;
+    alcoholic: string;
+    glass: string;
+    instruction_en: string;
+    ingredients: CocktailIngredientData[];
+}
+export interface CocktailIngredientData {
+    name: string;
+    measure: string;
+}
 export interface CocktailDbDrink {
     idDrink: string;
     strDrink: string;
-
     strDrinkThumb: string;
-
     strCategory: string;
-
     strAlcoholic: string;
-
     strGlass: string;
-
     strInstructions: string;
-
     strIngredient1?: string;
     strIngredient2?: string;
     strIngredient3?: string;
@@ -28,7 +35,6 @@ export interface CocktailDbDrink {
     strIngredient13?: string;
     strIngredient14?: string;
     strIngredient15?: string;
-
     strMeasure1?: string;
     strMeasure2?: string;
     strMeasure3?: string;

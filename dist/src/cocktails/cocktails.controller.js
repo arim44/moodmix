@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const cocktails_service_1 = require("./cocktails.service");
 const create_cocktail_dto_1 = require("./dto/create-cocktail.dto");
 const update_cocktail_dto_1 = require("./dto/update-cocktail.dto");
+const swagger_1 = require("@nestjs/swagger");
 let CocktailsController = class CocktailsController {
     cocktailsService;
     constructor(cocktailsService) {
@@ -41,6 +42,7 @@ let CocktailsController = class CocktailsController {
 exports.CocktailsController = CocktailsController;
 __decorate([
     (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: "칵테일 등록" }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_cocktail_dto_1.CreateCocktailDto]),
@@ -48,12 +50,14 @@ __decorate([
 ], CocktailsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: "칵테일 전체조회" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], CocktailsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: "칵테일 1개 상세조회" }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

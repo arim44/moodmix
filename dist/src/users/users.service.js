@@ -5,18 +5,51 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
+const prisma_service_1 = require("../prisma/prisma.service");
+const client_1 = require("@prisma/client");
 let UsersService = class UsersService {
-    create(createUserDto) {
-        return 'This action adds a new user';
+    prisma;
+    constructor(prisma) {
+        this.prisma = prisma;
+    }
+    ;
+    async createUser(data) {
+        return this.prisma.user.create({ data });
+    }
+    async findByEmail(email) {
+        return this.prisma.user.findUnique({ where: { email } });
+    }
+    async create(createUserDto) {
+        const exists = await this.prisma.user.findUnique({
+            where: { email: createUserDto.email }
+        });
+        if (exists)
+            throw new common_1.ConflictException("이미 가입된 이메일 입니다");
+        return this.prisma.user.create({
+            data: {
+                ...createUserDto,
+                role: client_1.Role.USER
+            }
+        });
     }
     findAll() {
-        return `This action returns all users`;
+        return this.prisma.user.findMany({
+            orderBy: { id: 'asc' }
+        });
     }
-    findOne(id) {
-        return `This action returns a #${id} user`;
+    async findOne(id) {
+        const user = await this.prisma.user.findUnique({
+            where: { id }
+        });
+        if (!user)
+            throw new common_1.NotFoundException(`사용자 아이디 ${id} 찾을 수 없습니다`);
+        return user;
     }
     update(id, updateUserDto) {
         return `This action updates a #${id} user`;
@@ -27,6 +60,7 @@ let UsersService = class UsersService {
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], UsersService);
 //# sourceMappingURL=users.service.js.map
