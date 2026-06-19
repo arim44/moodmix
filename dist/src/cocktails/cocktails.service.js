@@ -39,13 +39,48 @@ let CocktailsService = class CocktailsService {
         });
         if (!cocktail)
             throw new common_1.NotFoundException(`칵테일 아이디 ${id} 찾을 수 없습니다`);
-        return cocktail;
+        return {
+            id: cocktail.id,
+            name: cocktail.name_en,
+            image: cocktail.image_url,
+            category: cocktail.category,
+            alcoholic: cocktail.alcoholic,
+            glass: cocktail.glass,
+            instruction: cocktail.instruction_en,
+            ingredients: cocktail.ingredients.map(item => ({
+                name: item.ingredient.name_en,
+                measure: item.measure
+            }))
+        };
     }
     update(id, updateCocktailDto) {
         return `This action updates a #${id} cocktail`;
     }
     remove(id) {
         return `This action removes a #${id} cocktail`;
+    }
+    async recommend(dto) {
+        const cocktails = await this.prisma.cocktail.findMany({
+            include: {
+                ingredients: true,
+            }
+        });
+        const result = cocktails.map((cocktail) => {
+            const mathedCount = cocktail.ingredients.filter((item) => dto.ingredientIds.includes(item.ingredient_id)).length;
+            const totalCount = cocktail.ingredients.length;
+            const matchRate = Math.round((mathedCount / totalCount) * 100);
+            return {
+                id: cocktail.id,
+                name: cocktail.name_en,
+                image: cocktail.image_url,
+                matchCount: mathedCount,
+                totalCount,
+                matchRate,
+            };
+        }).filter((data) => data.matchRate > 30)
+            .sort((a, b) => b.matchRate - a.matchRate)
+            .slice(0, 5);
+        return result;
     }
 };
 exports.CocktailsService = CocktailsService;

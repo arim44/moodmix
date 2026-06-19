@@ -1,6 +1,7 @@
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { UpdateCocktailDto } from './dto/update-cocktail.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { RecommendCocktailDto } from './recommend/dto/recommendCocktail.dto';
 export declare class CocktailsService {
     private readonly prisma;
     constructor(prisma: PrismaService);
@@ -18,31 +19,26 @@ export declare class CocktailsService {
         instruction_ko: string | null;
     }[]>;
     findOne(id: number): Promise<{
-        ingredients: ({
-            ingredient: {
-                id: number;
-                name_en: string;
-                name_ko: string | null;
-                image_url: string | null;
-            };
-        } & {
-            id: number;
-            cocktail_id: number;
-            ingredient_id: number;
-            measure: string | null;
-        })[];
-    } & {
         id: number;
-        external_id: number | null;
-        name_en: string;
-        name_ko: string | null;
-        image_url: string | null;
+        name: string;
+        image: string | null;
         category: string;
         alcoholic: string;
         glass: string;
-        instruction_en: string;
-        instruction_ko: string | null;
+        instruction: string;
+        ingredients: {
+            name: string;
+            measure: string | null;
+        }[];
     }>;
     update(id: number, updateCocktailDto: UpdateCocktailDto): string;
     remove(id: number): string;
+    recommend(dto: RecommendCocktailDto): Promise<{
+        id: number;
+        name: string;
+        image: string | null;
+        matchCount: number;
+        totalCount: number;
+        matchRate: number;
+    }[]>;
 }

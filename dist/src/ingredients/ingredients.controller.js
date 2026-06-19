@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const ingredients_service_1 = require("./ingredients.service");
 const create_ingredient_dto_1 = require("./dto/create-ingredient.dto");
 const update_ingredient_dto_1 = require("./dto/update-ingredient.dto");
+const swagger_1 = require("@nestjs/swagger");
 let IngredientsController = class IngredientsController {
     ingredientsService;
     constructor(ingredientsService) {
@@ -48,12 +49,14 @@ __decorate([
 ], IngredientsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: "칵테일재료 전체조회" }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], IngredientsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: "칵테일재료 1개만 조회" }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

@@ -1,6 +1,7 @@
 import { CocktailsService } from './cocktails.service';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { UpdateCocktailDto } from './dto/update-cocktail.dto';
+import { RecommendCocktailDto } from './recommend/dto/recommendCocktail.dto';
 export declare class CocktailsController {
     private readonly cocktailsService;
     constructor(cocktailsService: CocktailsService);
@@ -18,31 +19,26 @@ export declare class CocktailsController {
         instruction_ko: string | null;
     }[]>;
     findOne(id: string): Promise<{
-        ingredients: ({
-            ingredient: {
-                id: number;
-                name_en: string;
-                name_ko: string | null;
-                image_url: string | null;
-            };
-        } & {
-            id: number;
-            cocktail_id: number;
-            ingredient_id: number;
-            measure: string | null;
-        })[];
-    } & {
         id: number;
-        external_id: number | null;
-        name_en: string;
-        name_ko: string | null;
-        image_url: string | null;
+        name: string;
+        image: string | null;
         category: string;
         alcoholic: string;
         glass: string;
-        instruction_en: string;
-        instruction_ko: string | null;
+        instruction: string;
+        ingredients: {
+            name: string;
+            measure: string | null;
+        }[];
     }>;
+    recommend(dto: RecommendCocktailDto): Promise<{
+        id: number;
+        name: string;
+        image: string | null;
+        matchCount: number;
+        totalCount: number;
+        matchRate: number;
+    }[]>;
     update(id: string, updateCocktailDto: UpdateCocktailDto): string;
     remove(id: string): string;
 }

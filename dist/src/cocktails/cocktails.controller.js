@@ -18,6 +18,7 @@ const cocktails_service_1 = require("./cocktails.service");
 const create_cocktail_dto_1 = require("./dto/create-cocktail.dto");
 const update_cocktail_dto_1 = require("./dto/update-cocktail.dto");
 const swagger_1 = require("@nestjs/swagger");
+const recommendCocktail_dto_1 = require("./recommend/dto/recommendCocktail.dto");
 let CocktailsController = class CocktailsController {
     cocktailsService;
     constructor(cocktailsService) {
@@ -31,6 +32,9 @@ let CocktailsController = class CocktailsController {
     }
     findOne(id) {
         return this.cocktailsService.findOne(+id);
+    }
+    recommend(dto) {
+        return this.cocktailsService.recommend(dto);
     }
     update(id, updateCocktailDto) {
         return this.cocktailsService.update(+id, updateCocktailDto);
@@ -63,6 +67,15 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], CocktailsController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Post)("recommend"),
+    (0, common_1.HttpCode)(200),
+    (0, swagger_1.ApiOperation)({ summary: "재료 선택 추천" }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [recommendCocktail_dto_1.RecommendCocktailDto]),
+    __metadata("design:returntype", void 0)
+], CocktailsController.prototype, "recommend", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
