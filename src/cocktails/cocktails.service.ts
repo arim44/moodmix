@@ -58,6 +58,7 @@ export class CocktailsService {
     return `This action removes a #${id} cocktail`;
   }
 
+  // 재료기반 추천
   async recommend(dto: RecommendCocktailDto) {
     const cocktails = await this.prisma.cocktail.findMany({
       include: {

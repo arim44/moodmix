@@ -4,7 +4,10 @@ const core_1 = require("@nestjs/core");
 const app_module_1 = require("./app.module");
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
+const fs_1 = require("fs");
+const upload_config_1 = require("./common/upload.config");
 async function bootstrap() {
+    (0, fs_1.mkdirSync)(upload_config_1.UPLOAD_DIR, { recursive: true });
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
         origin: 'http://localhost:5173',

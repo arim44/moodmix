@@ -2,9 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { mkdirSync } from "fs";
+import { UPLOAD_DIR } from "./common/upload.config";
 
 async function bootstrap() {
-  // mkdirSync(UPLOAD_DIR, {recursive:true}) //디렉토리 밑에 uploads 생성
+  mkdirSync(UPLOAD_DIR, {recursive:true}) //디렉토리 밑에 uploads 생성
   
   const app = await NestFactory.create(AppModule);
 

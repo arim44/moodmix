@@ -7,15 +7,15 @@ export declare class IngredientsController {
     create(createIngredientDto: CreateIngredientDto): string;
     findAll(): import("@prisma/client").Prisma.PrismaPromise<{
         id: number;
+        image_url: string | null;
         name_en: string;
         name_ko: string | null;
-        image_url: string | null;
     }[]>;
     findOne(id: string): Promise<{
         id: number;
+        image_url: string | null;
         name_en: string;
         name_ko: string | null;
-        image_url: string | null;
     }>;
     update(id: string, updateIngredientDto: UpdateIngredientDto): string;
     remove(id: string): string;

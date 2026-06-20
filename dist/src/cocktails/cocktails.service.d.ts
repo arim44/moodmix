@@ -8,10 +8,10 @@ export declare class CocktailsService {
     create(createCocktailDto: CreateCocktailDto): string;
     findAll(): import("@prisma/client").Prisma.PrismaPromise<{
         id: number;
+        image_url: string | null;
         external_id: number | null;
         name_en: string;
         name_ko: string | null;
-        image_url: string | null;
         category: string;
         alcoholic: string;
         glass: string;

@@ -17,16 +17,19 @@ const common_1 = require("@nestjs/common");
 const favorites_service_1 = require("./favorites.service");
 const create_favorite_dto_1 = require("./dto/create-favorite.dto");
 const update_favorite_dto_1 = require("./dto/update-favorite.dto");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth/jwt-auth.guard");
+const swagger_1 = require("@nestjs/swagger");
+const current_user_decorator_1 = require("../common/current-user.decorator");
 let FavoritesController = class FavoritesController {
     favoritesService;
     constructor(favoritesService) {
         this.favoritesService = favoritesService;
     }
-    create(createFavoriteDto) {
-        return this.favoritesService.create(createFavoriteDto);
+    create(createFavoriteDto, user) {
+        return this.favoritesService.create(user.id, createFavoriteDto.cocktailId);
     }
-    findAll() {
-        return this.favoritesService.findAll();
+    findAll(user) {
+        return this.favoritesService.findAll(user.id);
     }
     findOne(id) {
         return this.favoritesService.findOne(+id);
@@ -34,22 +37,30 @@ let FavoritesController = class FavoritesController {
     update(id, updateFavoriteDto) {
         return this.favoritesService.update(+id, updateFavoriteDto);
     }
-    remove(id) {
-        return this.favoritesService.remove(+id);
+    remove(cocktailId, user) {
+        return this.favoritesService.remove(user.id, +cocktailId);
     }
 };
 exports.FavoritesController = FavoritesController;
 __decorate([
     (0, common_1.Post)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: "즐겨찾기 추가" }),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_favorite_dto_1.CreateFavoriteDto]),
+    __metadata("design:paramtypes", [create_favorite_dto_1.CreateFavoriteDto, Object]),
     __metadata("design:returntype", void 0)
 ], FavoritesController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: "내 즐겨찾기 목록" }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], FavoritesController.prototype, "findAll", null);
 __decorate([
@@ -69,9 +80,13 @@ __decorate([
 ], FavoritesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: "즐겨찾기 삭제" }),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], FavoritesController.prototype, "remove", null);
 exports.FavoritesController = FavoritesController = __decorate([
