@@ -33,7 +33,7 @@ let PostsController = class PostsController {
     addImage(id, file, user) {
         if (!file)
             throw new common_1.UnsupportedMediaTypeException("올릴 이미지가 업어요");
-        return this.postsService.addImage(id, user, file);
+        return this.postsService.addImage(id, user.id, file);
     }
     findAll() {
         return this.postsService.findAll();
@@ -41,11 +41,11 @@ let PostsController = class PostsController {
     findOne(id) {
         return this.postsService.findOne(id);
     }
-    update(id, updatePostDto) {
-        return this.postsService.update(+id, updatePostDto);
+    update(id, updatePostDto, user) {
+        return this.postsService.update(id, updatePostDto, user.id);
     }
-    remove(id) {
-        return this.postsService.remove(+id);
+    remove(id, user) {
+        return this.postsService.remove(id, user.id);
     }
 };
 exports.PostsController = PostsController;
@@ -89,7 +89,7 @@ __decorate([
 ], PostsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)(':id'),
-    (0, swagger_1.ApiOperation)({ summary: "게시글 상세세조회" }),
+    (0, swagger_1.ApiOperation)({ summary: "게시글 상세조회" }),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
@@ -97,17 +97,25 @@ __decorate([
 ], PostsController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: "게시글 수정" }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_post_dto_1.UpdatePostDto]),
+    __metadata("design:paramtypes", [Number, update_post_dto_1.UpdatePostDto, Object]),
     __metadata("design:returntype", void 0)
 ], PostsController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ summary: "게시글 삭제" }),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
 ], PostsController.prototype, "remove", null);
 exports.PostsController = PostsController = __decorate([

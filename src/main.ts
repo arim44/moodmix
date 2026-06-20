@@ -18,7 +18,8 @@ async function bootstrap() {
   // app.enableCors();    // 모든 Origin 허용
 
   //whitelist (dto에 없는 필드 자동 제거)
-  app.useGlobalPipes(new ValidationPipe({whitelist:true, transform:true}));
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist:true, forbidNonWhitelisted:true, transform:true}));
 
   const config = new DocumentBuilder()
     .setTitle("MoodMix API(realtion 추가)")

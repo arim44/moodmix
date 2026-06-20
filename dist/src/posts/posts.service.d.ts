@@ -1,18 +1,13 @@
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { AuthUser } from '../common/current-user.decorator';
 export declare class PostsService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     create(createPostDto: CreatePostDto, userId: number): Promise<{
-        title: string;
-        content: string;
-        image_url: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         id: number;
-        user_id: number;
+        title: string;
+        message: string;
     }>;
     findAll(): Promise<{
         id: number;
@@ -33,15 +28,17 @@ export declare class PostsService {
         createdAt: Date;
         updatedAt: Date;
     }>;
-    update(id: number, updatePostDto: UpdatePostDto): string;
-    remove(id: number): string;
-    addImage(postId: number, user: AuthUser, file: Express.Multer.File): Promise<{
-        title: string;
-        content: string;
-        image_url: string | null;
-        createdAt: Date;
-        updatedAt: Date;
-        id: number;
-        user_id: number;
+    update(id: number, updatePostDto: UpdatePostDto, userId: number): Promise<{
+        message: string;
+        postId: number;
     }>;
+    remove(id: number, userId: number): Promise<{
+        message: string;
+        postId: number;
+    }>;
+    addImage(postId: number, userId: number, file: Express.Multer.File): Promise<{
+        id: number;
+        imageUrl: string | null;
+    }>;
+    private validateOwner;
 }

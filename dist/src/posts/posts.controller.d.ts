@@ -6,22 +6,13 @@ export declare class PostsController {
     private readonly postsService;
     constructor(postsService: PostsService);
     create(createPostDto: CreatePostDto, user: AuthUser): Promise<{
-        title: string;
-        content: string;
-        image_url: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         id: number;
-        user_id: number;
+        title: string;
+        message: string;
     }>;
     addImage(id: number, file: Express.Multer.File, user: AuthUser): Promise<{
-        title: string;
-        content: string;
-        image_url: string | null;
-        createdAt: Date;
-        updatedAt: Date;
         id: number;
-        user_id: number;
+        imageUrl: string | null;
     }>;
     findAll(): Promise<{
         id: number;
@@ -42,6 +33,12 @@ export declare class PostsController {
         createdAt: Date;
         updatedAt: Date;
     }>;
-    update(id: string, updatePostDto: UpdatePostDto): string;
-    remove(id: string): string;
+    update(id: number, updatePostDto: UpdatePostDto, user: AuthUser): Promise<{
+        message: string;
+        postId: number;
+    }>;
+    remove(id: number, user: AuthUser): Promise<{
+        message: string;
+        postId: number;
+    }>;
 }

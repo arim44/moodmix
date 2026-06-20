@@ -6,17 +6,19 @@ export declare class CocktailsController {
     private readonly cocktailsService;
     constructor(cocktailsService: CocktailsService);
     create(createCocktailDto: CreateCocktailDto): string;
-    findAll(): import("@prisma/client").Prisma.PrismaPromise<{
+    findAll(): Promise<{
         id: number;
-        image_url: string | null;
-        external_id: number | null;
-        name_en: string;
-        name_ko: string | null;
+        name: string;
+        image: string | null;
         category: string;
         alcoholic: string;
-        glass: string;
-        instruction_en: string;
-        instruction_ko: string | null;
+    }[]>;
+    searcj(keyword: string): Promise<{
+        id: number;
+        name: string;
+        image: string | null;
+        alcoholic: string;
+        category: string;
     }[]>;
     findOne(id: string): Promise<{
         id: number;

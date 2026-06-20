@@ -6,17 +6,12 @@ export declare class CocktailsService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     create(createCocktailDto: CreateCocktailDto): string;
-    findAll(): import("@prisma/client").Prisma.PrismaPromise<{
+    findAll(): Promise<{
         id: number;
-        image_url: string | null;
-        external_id: number | null;
-        name_en: string;
-        name_ko: string | null;
+        name: string;
+        image: string | null;
         category: string;
         alcoholic: string;
-        glass: string;
-        instruction_en: string;
-        instruction_ko: string | null;
     }[]>;
     findOne(id: number): Promise<{
         id: number;
@@ -33,6 +28,13 @@ export declare class CocktailsService {
     }>;
     update(id: number, updateCocktailDto: UpdateCocktailDto): string;
     remove(id: number): string;
+    search(keyword: string): Promise<{
+        id: number;
+        name: string;
+        image: string | null;
+        alcoholic: string;
+        category: string;
+    }[]>;
     recommend(dto: RecommendCocktailDto): Promise<{
         id: number;
         name: string;

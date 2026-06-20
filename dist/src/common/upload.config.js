@@ -20,11 +20,11 @@ exports.imageUploadOptions = {
     }),
     fileFilter: (_req, file, callback) => {
         if (!ALLOWED_MIME.includes(file.mimetype)) {
-            callback(new common_1.BadRequestException("이미지 파일만 올수 있어요"), false);
+            callback(new common_1.BadRequestException("이미지 파일만 올릴수 있습니다."), false);
             return;
         }
         callback(null, true);
     },
-    limit: { filSize: exports.MAX_FILE_SIZE },
+    limits: { fileSize: exports.MAX_FILE_SIZE },
 };
 //# sourceMappingURL=upload.config.js.map

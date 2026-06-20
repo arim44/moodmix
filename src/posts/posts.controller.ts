@@ -41,7 +41,7 @@ export class PostsController {
   ) {
     if (!file) throw new UnsupportedMediaTypeException("올릴 이미지가 업어요");
     // console.log(file)
-    return this.postsService.addImage(id, user, file);
+    return this.postsService.addImage(id, user.id, file);
   }
 
 
@@ -52,18 +52,25 @@ export class PostsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: "게시글 상세세조회" })
+  @ApiOperation({ summary: "게시글 상세조회" })
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.postsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "게시글 수정" })
+  update(@Param('id', ParseIntPipe) id: number, @Body() updatePostDto: UpdatePostDto,
+          @CurrentUser() user: AuthUser) {
+    return this.postsService.update(id, updatePostDto, user.id);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: "게시글 삭제" })
+  remove(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: AuthUser) {
+    return this.postsService.remove(id, user.id);
   }
 }

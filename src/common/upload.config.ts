@@ -26,12 +26,12 @@ export const imageUploadOptions = {
         if (!ALLOWED_MIME.includes(file.mimetype)) {
             callback(
                 //첫번째 에러
-                new BadRequestException("이미지 파일만 올수 있어요"), false
+                new BadRequestException("이미지 파일만 올릴수 있습니다."), false
             );
             return;
         }
         callback(null, true);
     },
     //파일사이즈
-    limit: { filSize: MAX_FILE_SIZE },
+    limits: { fileSize: MAX_FILE_SIZE },
 }

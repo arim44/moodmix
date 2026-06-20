@@ -19,6 +19,11 @@ let FavoritesService = class FavoritesService {
     }
     ;
     async create(userId, cocktailId) {
+        const cocktail = await this.prisma.cocktail.findUnique({
+            where: { id: cocktailId }
+        });
+        if (!cocktail)
+            throw new common_1.NotFoundException(`칵테일 ${cocktailId}를 찾을 수 없습니다.`);
         const exists = await this.prisma.favorite.findUnique({
             where: {
                 user_id_cocktail_id: {
@@ -29,18 +34,29 @@ let FavoritesService = class FavoritesService {
         });
         if (exists)
             throw new common_1.ConflictException("이미 즐겨찾기한 칵테일 입니다.");
-        return this.prisma.favorite.create({
+        const favorite = await this.prisma.favorite.create({
             data: {
                 user_id: userId,
                 cocktail_id: cocktailId
             }
         });
+        return { message: "즐겨찾기에 추가되었습니다.", favoriteId: favorite.id };
     }
-    findAll(userId) {
-        return this.prisma.favorite.findMany({
+    async findAll(userId) {
+        const favorites = await this.prisma.favorite.findMany({
             where: { user_id: userId },
-            include: { cocktail: true }
+            include: { cocktail: true },
+            orderBy: { createdAt: 'desc' }
         });
+        return favorites.map((favorite) => ({
+            favoriteId: favorite.id,
+            cocktailId: favorite.cocktail_id,
+            name: favorite.cocktail.name_en,
+            imageUrl: favorite.cocktail.image_url,
+            category: favorite.cocktail.category,
+            alcoholic: favorite.cocktail.alcoholic,
+            addedAt: favorite.createdAt
+        }));
     }
     findOne(id) {
         return `This action returns a #${id} favorite`;
@@ -48,8 +64,18 @@ let FavoritesService = class FavoritesService {
     update(id, updateFavoriteDto) {
         return `This action updates a #${id} favorite`;
     }
-    remove(userId, cocktailId) {
-        return this.prisma.favorite.delete({
+    async remove(userId, cocktailId) {
+        const favorite = await this.prisma.favorite.findUnique({
+            where: {
+                user_id_cocktail_id: {
+                    user_id: userId,
+                    cocktail_id: cocktailId
+                }
+            }
+        });
+        if (!favorite)
+            throw new common_1.NotFoundException("즐겨찾기를 찾을 수 없습니다.");
+        await this.prisma.favorite.delete({
             where: {
                 user_id_cocktail_id: {
                     user_id: userId,
@@ -57,6 +83,7 @@ let FavoritesService = class FavoritesService {
                 }
             }
         });
+        return { message: "즐겨찾기가 삭제되었습니다.", cocktailId };
     }
 };
 exports.FavoritesService = FavoritesService;

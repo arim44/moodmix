@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { UpdateCocktailDto } from './dto/update-cocktail.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -15,10 +15,18 @@ export class CocktailsService {
   }
 
   // 칵테일 전체 조회
-  findAll() {
-    return this.prisma.cocktail.findMany({
-      orderBy: { id: 'asc' }
+  async findAll() {
+    const cocktails = await this.prisma.cocktail.findMany({
+      orderBy: { name_en: 'asc' }
     });
+
+    return cocktails.map((data) => ({
+      id: data.id,
+      name: data.name_en,
+      image: data.image_url,
+      category: data.category,
+      alcoholic: data.alcoholic
+    }));
   }
 
   // 칵테일 1개만 상세조회
@@ -58,7 +66,33 @@ export class CocktailsService {
     return `This action removes a #${id} cocktail`;
   }
 
+  // 칵테일 이름 검색
+  async search(keyword: string) {
+    // 빈검색어 예외
+    if (!keyword?.trim()) throw new BadRequestException('검색어를 입력해주세요.');
+    const cocktails = await this.prisma.cocktail.findMany({
+      where: {
+        name_en: {
+          contains: keyword,
+          mode: 'insensitive'
+        }
+      },
+      orderBy: { name_en: 'asc' }
+    });
+    // 검색 결과 없을때
+    if (cocktails.length === 0) throw new NotFoundException(`"${keyword}" 검색 결과가 없습니다.`);
+
+    return cocktails.map((cocktail) => ({
+      id: cocktail.id,
+      name: cocktail.name_en,
+      image: cocktail.image_url,
+      alcoholic: cocktail.alcoholic,
+      category: cocktail.category
+    }));
+  }
+
   // 재료기반 추천
+  // 정렬 기준: 일치 재료 개수 우선 정렬
   async recommend(dto: RecommendCocktailDto) {
     const cocktails = await this.prisma.cocktail.findMany({
       include: {
@@ -66,29 +100,46 @@ export class CocktailsService {
       }
     });
 
+    // 존재하지 않는 재료일경우
+    const count = await this.prisma.ingredient.count({
+      where: { id: { in: dto.ingredientIds } }
+    });
+    if (count !== dto.ingredientIds.length) throw new NotFoundException("존재하지 않는 재료입니다.");
+
     const result = cocktails.map((cocktail) => {
-      const mathedCount = cocktail.ingredients.filter((item) =>
+      const matchedCount = cocktail.ingredients.filter((item) =>
         dto.ingredientIds.includes(item.ingredient_id)).length;
 
       const totalCount = cocktail.ingredients.length;
 
-      const matchRate = Math.round((mathedCount / totalCount) * 100);
+      // 재료없는 칵테일 방어 totalCount>0
+      // 현재 일치재료/칵테일 총재료 * 백분율(퍼센트)
+      const matchRate = totalCount > 0 ? Math.round((matchedCount / totalCount) * 100) : 0;
 
       return {
         id: cocktail.id,
         name: cocktail.name_en,
         image: cocktail.image_url,
-        // 보유 재료 표시
-        matchCount: mathedCount,
-        // 총 재룡 수
+        // 일치하는 재료 수
+        matchCount: matchedCount,
+        // 총 재료 수
         totalCount,
         // 일치율
         matchRate,
       };
     }).filter((data) => data.matchRate > 30)
-      .sort((a, b) => b.matchRate - a.matchRate)
-      .slice(0,5);  //상위 5개만 표시
+      //.sort((a, b) => b.matchRate - a.matchRate)
+      .sort((a, b) => {
+        if (b.matchCount !== a.matchCount) {
+          return b.matchCount - a.matchCount;  // 1. 매치수 내림차순
+        }
+        return b.matchRate - a.matchRate; //2. 매치율 내림차순
+      })
+      .slice(0, 5);  //상위 5개만 표시
 
-      return result;
+    // 추천 결과 없을때
+    if (result.length === 0) throw new NotFoundException(
+      "선택한 재료로 만들 수 있는 칵테일이 없습니다.");
+    return result;
   }
 }

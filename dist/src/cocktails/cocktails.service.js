@@ -21,10 +21,17 @@ let CocktailsService = class CocktailsService {
     create(createCocktailDto) {
         return 'This action adds a new cocktail';
     }
-    findAll() {
-        return this.prisma.cocktail.findMany({
-            orderBy: { id: 'asc' }
+    async findAll() {
+        const cocktails = await this.prisma.cocktail.findMany({
+            orderBy: { name_en: 'asc' }
         });
+        return cocktails.map((data) => ({
+            id: data.id,
+            name: data.name_en,
+            image: data.image_url,
+            category: data.category,
+            alcoholic: data.alcoholic
+        }));
     }
     async findOne(id) {
         const cocktail = await this.prisma.cocktail.findUnique({
@@ -59,27 +66,61 @@ let CocktailsService = class CocktailsService {
     remove(id) {
         return `This action removes a #${id} cocktail`;
     }
+    async search(keyword) {
+        if (!keyword?.trim())
+            throw new common_1.BadRequestException('검색어를 입력해주세요.');
+        const cocktails = await this.prisma.cocktail.findMany({
+            where: {
+                name_en: {
+                    contains: keyword,
+                    mode: 'insensitive'
+                }
+            },
+            orderBy: { name_en: 'asc' }
+        });
+        if (cocktails.length === 0)
+            throw new common_1.NotFoundException(`"${keyword}" 검색 결과가 없습니다.`);
+        return cocktails.map((cocktail) => ({
+            id: cocktail.id,
+            name: cocktail.name_en,
+            image: cocktail.image_url,
+            alcoholic: cocktail.alcoholic,
+            category: cocktail.category
+        }));
+    }
     async recommend(dto) {
         const cocktails = await this.prisma.cocktail.findMany({
             include: {
                 ingredients: true,
             }
         });
+        const count = await this.prisma.ingredient.count({
+            where: { id: { in: dto.ingredientIds } }
+        });
+        if (count !== dto.ingredientIds.length)
+            throw new common_1.NotFoundException("존재하지 않는 재료입니다.");
         const result = cocktails.map((cocktail) => {
-            const mathedCount = cocktail.ingredients.filter((item) => dto.ingredientIds.includes(item.ingredient_id)).length;
+            const matchedCount = cocktail.ingredients.filter((item) => dto.ingredientIds.includes(item.ingredient_id)).length;
             const totalCount = cocktail.ingredients.length;
-            const matchRate = Math.round((mathedCount / totalCount) * 100);
+            const matchRate = totalCount > 0 ? Math.round((matchedCount / totalCount) * 100) : 0;
             return {
                 id: cocktail.id,
                 name: cocktail.name_en,
                 image: cocktail.image_url,
-                matchCount: mathedCount,
+                matchCount: matchedCount,
                 totalCount,
                 matchRate,
             };
         }).filter((data) => data.matchRate > 30)
-            .sort((a, b) => b.matchRate - a.matchRate)
+            .sort((a, b) => {
+            if (b.matchCount !== a.matchCount) {
+                return b.matchCount - a.matchCount;
+            }
+            return b.matchRate - a.matchRate;
+        })
             .slice(0, 5);
+        if (result.length === 0)
+            throw new common_1.NotFoundException("선택한 재료로 만들 수 있는 칵테일이 없습니다.");
         return result;
     }
 };

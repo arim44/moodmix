@@ -30,6 +30,9 @@ let CocktailsController = class CocktailsController {
     findAll() {
         return this.cocktailsService.findAll();
     }
+    searcj(keyword) {
+        return this.cocktailsService.search(keyword);
+    }
     findOne(id) {
         return this.cocktailsService.findOne(+id);
     }
@@ -59,6 +62,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], CocktailsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('search'),
+    (0, swagger_1.ApiOperation)({ summary: "칵테일 이름 검색" }),
+    __param(0, (0, common_1.Query)('keyword')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], CocktailsController.prototype, "searcj", null);
 __decorate([
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ summary: "칵테일 1개 상세조회" }),

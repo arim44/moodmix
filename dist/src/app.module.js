@@ -17,12 +17,21 @@ const favorites_module_1 = require("./favorites/favorites.module");
 const auth_module_1 = require("./auth/auth.module");
 const cocktails_module_1 = require("./cocktails/cocktails.module");
 const ingredients_module_1 = require("./ingredients/ingredients.module");
+const serve_static_1 = require("@nestjs/serve-static");
+const upload_config_1 = require("./common/upload.config");
+const path_1 = require("path");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [users_module_1.UsersModule, auth_module_1.AuthModule, cocktails_module_1.CocktailsModule, ingredients_module_1.IngredientsModule, favorites_module_1.FavoritesModule, posts_module_1.PostsModule, prisma_module_1.PrismaModule],
+        imports: [users_module_1.UsersModule, auth_module_1.AuthModule, cocktails_module_1.CocktailsModule, ingredients_module_1.IngredientsModule,
+            favorites_module_1.FavoritesModule, posts_module_1.PostsModule, prisma_module_1.PrismaModule,
+            serve_static_1.ServeStaticModule.forRoot({
+                rootPath: (0, path_1.join)(process.cwd(), upload_config_1.UPLOAD_DIR),
+                serveRoot: "/uploads"
+            }),
+        ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
     })

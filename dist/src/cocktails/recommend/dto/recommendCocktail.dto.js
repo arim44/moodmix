@@ -20,6 +20,7 @@ exports.RecommendCocktailDto = RecommendCocktailDto;
 __decorate([
     (0, swagger_1.ApiProperty)({ example: [1, 2, 10] }),
     (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ArrayMinSize)(1),
     (0, class_validator_1.IsInt)({ each: true }),
     (0, class_transformer_1.Type)(() => Number),
     __metadata("design:type", Array)

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, Query } from '@nestjs/common';
 import { CocktailsService } from './cocktails.service';
 import { CreateCocktailDto } from './dto/create-cocktail.dto';
 import { UpdateCocktailDto } from './dto/update-cocktail.dto';
@@ -21,11 +21,18 @@ export class CocktailsController {
     return this.cocktailsService.findAll();
   }
 
+  // Get(':id') 보다 위에 있어야 함
+  @Get('search')
+  @ApiOperation({summary: "칵테일 이름 검색"})
+  searcj(@Query('keyword') keyword: string){
+    return this.cocktailsService.search(keyword);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: "칵테일 1개 상세조회" })
   findOne(@Param('id') id: string) {
     return this.cocktailsService.findOne(+id);
-  }
+  }  
 
   @Post("recommend")
   @HttpCode(200)

@@ -2,5 +2,5 @@
 // 운영에서 dev-secret-change-me 를 .env에서 바꿔서 사용
 
 export const jwtContants = {
-    secret: process.env.JMT_SECRET ?? "dev-secret-change-me"
+    secret: process.env.JWT_SECRET ?? "dev-secret-change-me"
 }
