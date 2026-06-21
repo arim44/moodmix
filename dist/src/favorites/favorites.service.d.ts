@@ -18,8 +18,8 @@ export declare class FavoritesService {
     }[]>;
     findOne(id: number): string;
     update(id: number, updateFavoriteDto: UpdateFavoriteDto): string;
-    remove(userId: number, cocktailId: number): Promise<{
+    remove(userId: number, favoriteId: number): Promise<{
         message: string;
-        cocktailId: number;
+        favoriteId: number;
     }>;
 }

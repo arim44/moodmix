@@ -37,8 +37,8 @@ let FavoritesController = class FavoritesController {
     update(id, updateFavoriteDto) {
         return this.favoritesService.update(+id, updateFavoriteDto);
     }
-    remove(cocktailId, user) {
-        return this.favoritesService.remove(user.id, +cocktailId);
+    remove(favoriteId, user) {
+        return this.favoritesService.remove(user.id, favoriteId);
     }
 };
 exports.FavoritesController = FavoritesController;
@@ -83,10 +83,10 @@ __decorate([
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ summary: "즐겨찾기 삭제" }),
-    __param(0, (0, common_1.Param)('id')),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
     __param(1, (0, current_user_decorator_1.CurrentUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [Number, Object]),
     __metadata("design:returntype", void 0)
 ], FavoritesController.prototype, "remove", null);
 exports.FavoritesController = FavoritesController = __decorate([

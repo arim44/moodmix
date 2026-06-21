@@ -64,26 +64,19 @@ let FavoritesService = class FavoritesService {
     update(id, updateFavoriteDto) {
         return `This action updates a #${id} favorite`;
     }
-    async remove(userId, cocktailId) {
+    async remove(userId, favoriteId) {
         const favorite = await this.prisma.favorite.findUnique({
-            where: {
-                user_id_cocktail_id: {
-                    user_id: userId,
-                    cocktail_id: cocktailId
-                }
-            }
+            where: { id: favoriteId }
         });
         if (!favorite)
             throw new common_1.NotFoundException("즐겨찾기를 찾을 수 없습니다.");
+        if (favorite.user_id !== userId) {
+            throw new common_1.NotFoundException("삭제 권한이 없습니다.");
+        }
         await this.prisma.favorite.delete({
-            where: {
-                user_id_cocktail_id: {
-                    user_id: userId,
-                    cocktail_id: cocktailId,
-                }
-            }
+            where: { id: favoriteId }
         });
-        return { message: "즐겨찾기가 삭제되었습니다.", cocktailId };
+        return { message: "즐겨찾기가 삭제되었습니다.", favoriteId };
     }
 };
 exports.FavoritesService = FavoritesService;

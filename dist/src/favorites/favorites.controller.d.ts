@@ -20,8 +20,8 @@ export declare class FavoritesController {
     }[]>;
     findOne(id: string): string;
     update(id: string, updateFavoriteDto: UpdateFavoriteDto): string;
-    remove(cocktailId: string, user: AuthUser): Promise<{
+    remove(favoriteId: number, user: AuthUser): Promise<{
         message: string;
-        cocktailId: number;
+        favoriteId: number;
     }>;
 }

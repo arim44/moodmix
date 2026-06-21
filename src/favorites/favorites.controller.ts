@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { FavoritesService } from './favorites.service';
 import { CreateFavoriteDto } from './dto/create-favorite.dto';
 import { UpdateFavoriteDto } from './dto/update-favorite.dto';
@@ -42,8 +42,13 @@ export class FavoritesController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({summary:"즐겨찾기 삭제"})
-  remove(@Param('id') cocktailId: string,
+  remove(@Param('id', ParseIntPipe) favoriteId: number,
           @CurrentUser() user: AuthUser) {
-    return this.favoritesService.remove(user.id, +cocktailId);
+    return this.favoritesService.remove(user.id, favoriteId);
   }
 }
+
+
+// remove(@Param('id', ParseIntPipe) favoriteId: number,cocktailId: string,
+//           @CurrentUser() user: AuthUser) {
+//     return this.favoritesService.remove(user.id, favoriteId ,+cocktailId);
