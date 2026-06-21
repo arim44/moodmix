@@ -1,23 +1,49 @@
-# 🍸 MoodMix
+# 🍸 MoodMix Backend
 
 > 내 재료로 만드는 칵테일 추천 플랫폼
 
-사용자가 보유한 재료를 선택하면 제조 가능한 칵테일을 추천받을 수 있는 서비스입니다.
+TheCocktailDB Open API 데이터를 활용하여 칵테일 정보를 제공하고, 사용자가 선택한 재료를 기반으로 칵테일을 추천하는 서비스입니다.
 
-칵테일 목록 및 상세 정보를 조회할 수 있으며, 관심 있는 칵테일을 즐겨찾기에 등록할 수 있습니다.
-또한 직접 만든 칵테일 사진과 후기를 게시글로 작성하여 다른 사용자와 공유할 수 있는 Mix Board 기능을 제공합니다.
+JWT 인증을 적용하여 회원 기능을 구현하였으며, 게시판 및 이미지 업로드 기능을 제공합니다.
 
 ---
 
 ## 📌 프로젝트 소개
 
-집에 있는 재료만으로 어떤 칵테일을 만들 수 있는지 쉽게 확인할 수 있도록 기획한 서비스입니다.
+TheCocktailDB Open API 데이터를 활용하여 칵테일 정보를 제공하고, 사용자가 선택한 재료를 기반으로 칵테일을 추천하는 서비스입니다.
 
-TheCocktailDB API를 활용하여 칵테일 데이터를 수집하고, 사용자가 선택한 재료를 기반으로 제조 가능한 칵테일을 추천합니다.
+JWT 인증을 적용하여 회원 기능을 구현하였으며, 게시판 및 이미지 업로드 기능을 제공합니다.
 
 ---
 
 ## 🚀 주요 기능
+
+### 회원
+
+* 회원가입
+* 로그인
+* JWT 인증
+
+### 칵테일
+
+* 칵테일 목록 조회
+* 칵테일 상세 조회
+* 칵테일 이름 검색
+* 재료 기반 추천
+
+### 즐겨찾기
+
+* 즐겨찾기 등록
+* 내 즐겨찾기 조회
+* 즐겨찾기 삭제
+
+### 게시판
+
+* 게시글 등록
+* 게시글 조회
+* 게시글 수정
+* 게시글 삭제
+* 이미지 업로드
 
 ### 1. 재료 기반 칵테일 추천
 
@@ -60,12 +86,23 @@ TheCocktailDB API를 활용하여 칵테일 데이터를 수집하고, 사용자
 * JWT Authentication
 * Swagger
 
+### Authentication
+* Passport
+* JWT
+
+### Documentation
+* Swagger
+
+### File Upload
+* Multer
+* Serve Static
+
 ### Frontend
 
 * React
 * TypeScript
 
-### Infra
+### Infra -> 추후예정
 
 * Azure App Service
 * Azure PostgreSQL
@@ -106,23 +143,27 @@ TheCocktailDB API를 활용하여 칵테일 데이터를 수집하고, 사용자
 ### Cocktails
 
 * GET /cocktails
-* GET /cocktails/search
 * GET /cocktails/:id
+* GET /cocktails/search
+
+### Ingredients
+
+* GET /ingredients
 
 ### Recommendation
 
-* GET /ingredients
-* POST /recommend
+* POST /cocktails/recommend
 
 ### Favorites
 
 * POST /favorites
-* GET /favorites/:userId
+* GET /favorites
 * DELETE /favorites/:id
 
 ### Posts
 
 * POST /posts
+* POST /posts/:id/images
 * GET /posts
 * GET /posts/:id
 * PATCH /posts/:id
@@ -130,20 +171,81 @@ TheCocktailDB API를 활용하여 칵테일 데이터를 수집하고, 사용자
 
 ---
 
-## 🔐 인증
+## 🔐 인증 및 권한
 
-Passport와 JWT 기반 인증을 사용합니다.
+JWT 기반 인증을 적용하였습니다.
 
-* 회원가입
-* 로그인
-* 인증 사용자 권한 확인
+* 인증 사용자 확인
+* 즐겨찾기 사용자 검증
 * 게시글 작성자 검증
+* 게시글 이미지 업로드 권한 검증
+
+---
+
+## 🔧 Trouble Shooting
+
+### Open Cocktail DB 데이터 정규화
+
+* 칵테일과 재료 데이터가 중복되는 구조
+* Cocktail, Ingredient, CocktailIngredient 테이블로 분리하여 정규화
+
+### 즐겨찾기 중복 등록 방지
+
+* 동일 사용자가 같은 칵테일을 여러 번 등록 가능
+* Prisma `@@unique([user_id, cocktail_id])` 적용
+
+### React 로그인 요청 오류
+
+* 입력 상태와 실제 요청 데이터가 달라 400 오류 발생
+* Form 상태를 하나로 통합하여 해결
+
+### 파일 업로드 검증
+
+* 이미지 외 파일 업로드 가능
+* Multer `fileFilter`를 이용하여 MIME 타입 검증 추가
+
+### 게시글 권한 검증
+
+* 타인의 게시글 수정 및 삭제 가능
+* `validateOwner()` 로 작성자 검증 로직 공통화
+
+---
+
+## ⚙️ Environment Variables
+
+```env
+DATABASE_URL=
+PORT=3000
+JWT_SECRET=
+APP_URL=http://localhost:3000
+```
+
+---
+
+## ▶ 실행 방법
+
+```bash
+npm install
+
+npx prisma migrate dev
+
+npm run start:dev
+```
+
+---
+
+## 📄 API 문서
+
+Swagger
+
+http://localhost:3000/api
 
 ---
 
 ## 👨‍💻 Developer
 
 홍아림
+
 
 
 
